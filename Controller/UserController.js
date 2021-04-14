@@ -1,5 +1,5 @@
-
 const {User,validate} = require('../Models/UserModel');
+const bcrypt = require('bcryptjs');
 
 const getUser=('/',(req,res)=>{
     User.find().exec((err,course)=>{
@@ -16,9 +16,10 @@ const InsertUser=('/', async (req, res) => {
     const { error } = validate({Name,Phone,RegisterNo,Password,isStaff});
     if (error) return res.status(400).send(error.details[0].message);
     
+    var hash = bcrypt.hashSync(req.body.Password, 8);
     let user = new User({
         Email:req.body.Email,
-        Password:req.body.Password,
+        Password:hash,
         Phone:req.body.Phone,
         RegisterNo:req.body.RegisterNo,
         isStaff:req.body.isStaff,
@@ -90,12 +91,13 @@ const UpdateUser=('/:id', async (req, res) => {
     const{Name,Phone,RegisterNo,Password,isStaff}=req.body;
     const { error } = validate({Name,Phone,RegisterNo,Password,isStaff});
     if (error) return res.status(400).send(error.details[0].message);
+    var hash = bcrypt.hashSync(req.body.Password, 8);
   
     const user = await User.findByIdAndUpdate(
       req.params.id,
       {
         Email:req.body.Email,
-        Password:req.body.Password,
+        Password:hash,
         Phone:req.body.Phone,
         RegisterNo:req.body.RegisterNo,
         isStaff:req.body.isStaff,
