@@ -6,6 +6,7 @@ dotenv.config();
 const auth = require('./Authentication/auth');
 const classroom=require('./Routes/Classroom');
 const user=require('./Routes/User')
+const files=require('./Routes/Files');
 
 app.use(express.json());
 
@@ -22,6 +23,7 @@ mongoose.connect(connectionstring, { useNewUrlParser: true, useUnifiedTopology: 
 app.use('/auth', auth);
 app.use('/Classroom',classroom);
 app.use('/User',user);
+app.use('/Files',files);
 
 app.get('/', (req, res) => {
     res.send("Home")

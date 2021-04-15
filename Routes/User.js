@@ -5,7 +5,6 @@ const {getUser,UpdateUser,deleteUser,deleteUsers,InsertUser} =require('../Contro
 
 Router.get('/',getUser)
  Router.post('/', InsertUser)
-//Router.post('/', InsertUsers)
 Router.put('/:id',UpdateUser)
 Router.delete('/:id',deleteUser)
 Router.delete('/',deleteUsers);

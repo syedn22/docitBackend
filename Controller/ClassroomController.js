@@ -1,6 +1,8 @@
 
 const {Classroom,validate} = require('../Models/ClassroomModel');
 const {User}=require('../Models/UserModel');
+const fs=require('fs');
+
 
 const getClassroom=('/',(req,res)=>{
     Classroom.find().exec((err,course)=>{
@@ -39,6 +41,16 @@ const InsertClassroom=('/', async (req, res) => {
                 res.send(err);
                 }
                 });
+                const dest=Name;
+                fs.access(dest, function (error) {
+                    if (error) {
+                      console.log("Directory does not exist.");
+                      return fs.mkdir(dest, (error) => cb(error, dest));
+                    } else {
+                      console.log("Directory exists.");
+                      return cb(null, dest);
+                    }
+                  });
             console.log("classroom added successfully");
             res.status(200).send(classroom);
         }

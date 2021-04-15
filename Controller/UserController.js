@@ -9,6 +9,7 @@ if(err)
 }
 res.status(200).send(course)
 })           
+
 })
 
 const InsertUser=('/', async (req, res) => {

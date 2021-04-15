@@ -30,12 +30,12 @@ Router.post('/signin',async (req, res) => {
         return res.status(200).send(token);
       }
       else{
-        res.send("Wrong username or password.");
+        res.send("User credentials are wrong");
       }
      
     }
     else{
-      res.send("Wrong username or password.");
+      res.send("User Credentials are wrong");
     }
 
     res.status(401).send('Invalid User');
