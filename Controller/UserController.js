@@ -1,42 +1,30 @@
-const { User, validate } = require("../Models/UserModel");
+const {User,validate} = require('../Models/UserModel');
+const bcrypt = require('bcryptjs');
 
-const getUsers =
-  ("/",
-  (req, res) => {
-    User.find().exec((err, users) => {
-      if (err) {
-        return res.status(500).send(err.message);
-      }
-      res.status(200).send(users);
-    });
-  });
+const getUser=('/',(req,res)=>{
+    User.find().exec((err,course)=>{
+if(err)
+{
+    return res.status(500).send(err.message);
+}
+res.status(200).send(course)
+})           
+})
 
-const getUser =
-  ("/:id",
-  (req, res) => {
-    User.findById(req.params.id).exec((err, user) => {
-      if (err) {
-        return res.status(500).send(err.message);
-      }
-      res.status(200).send(user);
-    });
-  });
-
-const InsertUser =
-  ("/",
-  async (req, res) => {
-    const { Name, Phone, RegisterNo, Password, isStaff } = req.body;
-    const { error } = validate({ Name, Phone, RegisterNo, Password, isStaff });
+const InsertUser=('/', async (req, res) => {
+    const{Name,Phone,RegisterNo,Password,isStaff}=req.body;
+    const { error } = validate({Name,Phone,RegisterNo,Password,isStaff});
     if (error) return res.status(400).send(error.details[0].message);
-
+    
+    var hash = bcrypt.hashSync(req.body.Password, 8);
     let user = new User({
-      Email: req.body.Email,
-      Password: req.body.Password,
-      Phone: req.body.Phone,
-      RegisterNo: req.body.RegisterNo,
-      isStaff: req.body.isStaff,
-      Name: req.body.Name,
-      Classroom: req.body.Classroom,
+        Email:req.body.Email,
+        Password:hash,
+        Phone:req.body.Phone,
+        RegisterNo:req.body.RegisterNo,
+        isStaff:req.body.isStaff,
+        Name:req.body.Name,
+        Classroom:req.body.Classroom
     });
 
     try {
@@ -104,17 +92,18 @@ const UpdateUser =
     const { Name, Phone, RegisterNo, Password, isStaff } = req.body;
     const { error } = validate({ Name, Phone, RegisterNo, Password, isStaff });
     if (error) return res.status(400).send(error.details[0].message);
-
+    var hash = bcrypt.hashSync(req.body.Password, 8);
+  
     const user = await User.findByIdAndUpdate(
       req.params.id,
       {
-        Email: req.body.Email,
-        Password: req.body.Password,
-        Phone: req.body.Phone,
-        RegisterNo: req.body.RegisterNo,
-        isStaff: req.body.isStaff,
-        Name: req.body.Name,
-        Classroom: req.body.Classroom,
+        Email:req.body.Email,
+        Password:hash,
+        Phone:req.body.Phone,
+        RegisterNo:req.body.RegisterNo,
+        isStaff:req.body.isStaff,
+        Name:req.body.Name,
+        Classroom:req.body.Classroom
       },
       { new: true }
     );

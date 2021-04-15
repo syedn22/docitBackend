@@ -42,11 +42,16 @@ const UserSchema = new Schema({
         default:false,
         required:true
     },
-    Classroom:[{
-        type:Schema.Types.ObjectId,
+    Classroom:{
+        type:[Schema.Types.ObjectId],
         required:true,
-        ref:'Classroom'
-    }]
+        ref:'Classroom',
+    validate:{
+        validator:function(v){
+            return v && v.length >0;
+        },
+        message:'At least One Classroom should be present'
+    }}
 });
 
 const complexityOptions = {
