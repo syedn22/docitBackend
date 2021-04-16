@@ -43,9 +43,13 @@ const UserSchema = new Schema({
         required:true
     },
     Classroom:{
-        type:[Schema.Types.ObjectId],
-        required:true,
-        ref:'Classroom',
+        type:[
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Classroom",
+                required: true
+            }
+        ],
     validate:{
         validator:function(v){
             return v && v.length >0;
@@ -76,25 +80,7 @@ const validateUser=(user)=> {
     return schema.validate(user);
   }
 
-//   const validateUsers=(users)=>{
-//     const schema = Joi.array().items(Joi.object().keys({
-//         Email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'in'] } }),
-//         Phone: Joi.number().required(),
-//         Name: Joi.string().min(3).max(255).required(),
-//         isStaff:Joi.boolean().required(),
-//         RegisterNo:Joi.number().required(),
-//         Password: passwordComplexity(complexityOptions),
-//         Classroom:Joi.array().items(Joi.objectId().required())
-//       })
-//       );
-//       console.log(schema.validate(users));
-//       return schema.validate(users);
-//   }
-
-
-
 const User = mongoose.model("user",UserSchema);
 module.exports.validate=validateUser;
-// module.exports.validateUsers=validateUsers;
 module.exports.UserSchema=UserSchema;
 module.exports.User = User;

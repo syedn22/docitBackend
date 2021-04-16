@@ -18,7 +18,7 @@ const ClassroomSchema = new Schema({
         type:Number,
         required:true
     },
-    User:[{type:new Schema({
+    users:[{type:new Schema({
         UserId:{
             type:Schema.Types.ObjectId,
             ref:'User',
