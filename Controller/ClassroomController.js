@@ -1,5 +1,6 @@
 const { Classroom, validate } = require("../Models/ClassroomModel");
 const { User } = require("../Models/UserModel");
+const fs=require('fs');
 
 const getClassrooms =
   ("/",
@@ -49,6 +50,22 @@ const InsertClassroom =
               res.send(err);
             }
           });
+
+          path="public/upload/"+Name;
+          fs.access(path, (error) => {
+            if (error) {
+              fs.mkdir(path, (error) => {
+                if (error) {
+                  console.log(error);
+                } else {
+                  console.log("New Directory created successfully !!");
+                }
+              });
+            } else {
+              console.log("Given Directory already exists !!");
+            }
+          });
+
           console.log("classroom added successfully");
           res.status(200).send(classroom);
         }

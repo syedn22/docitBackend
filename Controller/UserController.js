@@ -1,5 +1,11 @@
 const { User, validate } = require("../Models/UserModel");
 const bcrypt = require("bcryptjs");
+const { Classroom } = require("../Models/ClassroomModel");
+const mongoose=require('mongoose');
+const Fawn=require('fawn');
+Fawn.init(mongoose);
+
+const Class=Classroom;
 
 const getUsers =
   ("/",
@@ -27,7 +33,7 @@ const getUser =
 const InsertUser =
   ("/",
   async (req, res) => {
-    const { Name, Phone, RegisterNo, Password, isStaff } = req.body;
+    const { Name, Phone, RegisterNo, Password, isStaff,Classroom } = req.body;
     const { error } = validate({ Name, Phone, RegisterNo, Password, isStaff });
     if (error) return res.status(400).send(error.details[0].message);
 
@@ -55,12 +61,16 @@ const InsertUser =
             console.log(d);
             return res.status(400).send("Already User Exists");
           } else {
-            user.save((err) => {
-              if (err) {
-                console.log(err);
-                res.send(err);
-              }
-            });
+
+            
+            // user.save((err) => {
+            //   if (err) {
+            //     console.log(err);
+            //     res.send(err);
+            //   }
+            // });
+
+            
             console.log("User is Added Successfully");
             res.status(200).send(user);
           }

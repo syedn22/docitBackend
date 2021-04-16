@@ -30,12 +30,12 @@ const UserSchema = new Schema({
     Phone:{
         type:Number,
         trim:true,
-        required:true
+        required:true,
     },
     RegisterNo:{
         type:Number,
         trim:true,
-        required:true
+        required:true,
     },
     isStaff:{
         type:Boolean,
@@ -53,6 +53,7 @@ const UserSchema = new Schema({
         message:'At least One Classroom should be present'
     }}
 });
+
 
 const complexityOptions = {
     min: 5,
