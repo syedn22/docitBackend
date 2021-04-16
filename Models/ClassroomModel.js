@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
 const Schema = mongoose.Schema;
+const validator = require("mongoose-validator");
 
 const ClassroomSchema = new Schema({
     Name:{
@@ -16,7 +17,42 @@ const ClassroomSchema = new Schema({
     Period:{
         type:Number,
         required:true
-    }
+    },
+    users:[{type:new Schema({
+        UserId:{
+            type:Schema.Types.ObjectId,
+            ref:'User',
+            required:true
+        },
+        Name:{
+            type:String,
+            trim:true,
+            required:true
+        },
+        isStaff:{
+            type:Boolean,
+            required:true
+        },
+        Email:{
+        type: String,
+        trim:true,
+        required: true,
+        validate: [
+            validator({
+              validator: "isEmail",
+              message: "please enter valid email...",
+            }),
+          ],
+        },
+        RegisterNo:{
+            type:Number,
+            trim:true,
+            required:true
+        }
+    }),
+    default:null
+}
+]
 });
 
 const validateClassroom=(classroom)=> {

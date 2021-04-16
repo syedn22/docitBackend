@@ -1,5 +1,10 @@
 const { User, validate } = require("../Models/UserModel");
+const { Classroom } = require("../Models/ClassroomModel");
 const bcrypt = require("bcryptjs");
+const Fawn = require("fawn");
+const mongoose = require("mongoose");
+
+Fawn.init(mongoose);
 
 const getUsers =
   ("/",
@@ -31,6 +36,15 @@ const InsertUser =
     const { error } = validate({ Name, Phone, RegisterNo, Password, isStaff });
     if (error) return res.status(400).send(error.details[0].message);
 
+    const classroom = [];
+    for(let c of req.body.Classroom){
+      console.log(c);
+      const result =await Classroom.findById(c);
+      if (!result) return res.status(400).send("Invalid classroom.");
+      classroom.push(result);
+      console.log(result);
+    }
+
     var hash = bcrypt.hashSync(req.body.Password, 8);
     let user = new User({
       Email: req.body.Email,
@@ -55,14 +69,28 @@ const InsertUser =
             console.log(d);
             return res.status(400).send("Already User Exists");
           } else {
-            user.save((err) => {
-              if (err) {
-                console.log(err);
-                res.send(err);
+            try {
+              let task = Fawn.Task();
+              task = task.save("users", user);
+              for (let c of classroom) {
+                const users = c.users;
+                users.push(user);
+                console.log(users);
+                task = task.update(
+                  'classrooms', {
+                    _id: c._id
+                  }, {
+                    $set: {
+                      users: users
+                    }
+                  }
+                )
               }
-            });
-            console.log("User is Added Successfully");
-            res.status(200).send(user);
+                task.run();
+              res.send(user);
+            } catch (ex) {
+              res.status(500).send("Something failed." + ex.message);
+            }
           }
         }
       );
