@@ -1,6 +1,9 @@
 const { Classroom, validate } = require("../Models/ClassroomModel");
 const { User } = require("../Models/UserModel");
 const fs=require('fs');
+const Fawn = require("fawn");
+const mongoose = require("mongoose");
+
 
 const getClassrooms =
   ("/",
@@ -99,14 +102,8 @@ const UpdateClassroom =
 const deleteClassroom =
   ("/:id",
   async (req, res) => {
-    const DeleteUser = await User.findOneAndRemove({
-      Classroom: req.params.id,
-    });
-    const classroom = await Classroom.findByIdAndRemove(req.params.id);
 
-    if (!classroom) return res.status(404).send("Department Not found");
-
-    res.status(200).send({ classroom, DeleteUser });
+   
   });
 
 module.exports = {

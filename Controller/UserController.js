@@ -32,12 +32,12 @@ const getUser =
 const InsertUser =
   ("/",
   async (req, res) => {
-    const { Name, Phone, RegisterNo, Password, isStaff,Classroom } = req.body;
-    const { error } = validate({ Name, Phone, RegisterNo, Password, isStaff });
+    const { Name, Phone, RegisterNo, Password, isStaff,ClassroomId } = req.body;
+    const { error } = validate({ Name, Phone, RegisterNo, Password, isStaff,ClassroomId });
     if (error) return res.status(400).send(error.details[0].message);
 
     const classroom = [];
-    for(let c of req.body.Classroom){
+    for(let c of req.body.ClassroomId){
       console.log(c);
       const result =await Classroom.findById(c);
       if (!result) return res.status(400).send("Invalid classroom.");
@@ -53,7 +53,7 @@ const InsertUser =
       RegisterNo: req.body.RegisterNo,
       isStaff: req.body.isStaff,
       Name: req.body.Name,
-      Classroom: req.body.Classroom,
+      Classroom: req.body.ClassroomId,
     });
 
     try {
@@ -132,8 +132,8 @@ const InsertUser =
 const UpdateUser =
   ("/:id",
   async (req, res) => {
-    const { Name, Phone, RegisterNo, Password, isStaff } = req.body;
-    const { error } = validate({ Name, Phone, RegisterNo, Password, isStaff });
+    const { Name, Phone, RegisterNo, Password, isStaff,ClassroomId } = req.body;
+    const { error } = validate({ Name, Phone, RegisterNo, Password, isStaff,ClassroomId });
     if (error) return res.status(400).send(error.details[0].message);
     var hash = bcrypt.hashSync(req.body.Password, 8);
 
@@ -146,7 +146,7 @@ const UpdateUser =
         RegisterNo: req.body.RegisterNo,
         isStaff: req.body.isStaff,
         Name: req.body.Name,
-        Classroom: req.body.Classroom,
+        Classroom: req.body.ClassroomId,
       },
       { new: true }
     );
