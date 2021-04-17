@@ -47,12 +47,11 @@ const UserSchema = new Schema({
             {
                 type: Schema.Types.ObjectId,
                 ref: "Classroom",
-                required: true
             }
         ],
-    validate:{
+        validate:{
         validator:function(v){
-            return v && v.length >0;
+            return v && v.length > 0;
         },
         message:'At least One Classroom should be present'
     }}
