@@ -3,6 +3,7 @@ const { Classroom } = require("../Models/ClassroomModel");
 const bcrypt = require("bcryptjs");
 const Fawn = require("fawn");
 const mongoose = require("mongoose");
+const { Files } = require("../Models/fileModel");
 
 const getUsers =
   ("/",
@@ -35,7 +36,7 @@ const InsertUser =
     if (error) return res.status(400).send(error.details[0].message);
 
     const classroom = [];
-    for(let c of req.body.Classroom){
+    for(let c of req.body.ClassroomId){
       const result =await Classroom.findById(c);
       if (!result) return res.status(400).send("Invalid classroom.");
       classroom.push(result);
@@ -139,7 +140,7 @@ const UpdateUser =
       RegisterNo: req.body.RegisterNo,
       isStaff: req.body.isStaff,
       Name: req.body.Name,
-      Classroom: req.body.Classroom,
+      Classroom: req.body.ClassroomId,
     };
 
     const user = await User.findById(req.params.id);
@@ -159,7 +160,7 @@ const UpdateUser =
     };
 
     const updateClassroom = [];
-    for(let classroom of req.body.Classroom){
+    for(let classroom of req.body.ClassroomId){
       const result =await Classroom.findById(classroom);
       if (!result) return res.status(400).send("Invalid classroom.");
       updateClassroom.push(result);
@@ -252,7 +253,29 @@ const deleteUser =
       res.status(500).send("Something failed." + ex.message);
     }
     
-    res.status(200).send(user);
+    try{
+   const delete_files=await Files.find({studentId:user._id});
+
+   if(delete_files)
+   {
+      try{
+        delete_files.forEach((file) => { fs.existsSync(file.path) && fs.unlinkSync(file.path)});
+
+        await Files.findByIdAndRemove({studentId:user._id})
+      }
+      catch(e)
+      {
+        return res.status(400).send(e.message);
+      }
+   }
+
+  }
+  catch(e)
+  {
+    return res.status(400).send(e.message);
+  }
+
+    return res.status(200).send(user);
   });
 
 const deleteUsers =

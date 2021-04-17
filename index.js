@@ -7,6 +7,7 @@ const auth = require("./Authentication/auth");
 const classroom = require("./Routes/Classroom");
 const user = require("./Routes/User");
 const Fawn = require("fawn");
+const file=require('./Routes/Files');
 
 Fawn.init(mongoose);
 
@@ -39,6 +40,7 @@ mongoose
 app.use("/auth", auth);
 app.use("/Classroom", classroom);
 app.use("/User", user);
+app.use('/File',file)
 
 app.get("/", (req, res) => {
   res.send("Home");

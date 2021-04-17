@@ -88,6 +88,7 @@ const UpdateClassroom =
         Name: req.body.Name,
         Batch: req.body.Batch,
         Period: req.body.Period,
+        users:req.body.users
       },
       { new: true }
     );

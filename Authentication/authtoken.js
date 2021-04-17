@@ -15,7 +15,7 @@ const authenticateToken=(req,res,next)=>{
       }
   
       req.user=data;
-      console.log(req.user)
+      //console.log(req.user)
       next();
     })
   

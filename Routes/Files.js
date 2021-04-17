@@ -2,27 +2,28 @@ const multer=require('multer');
 const fs=require('fs');
 const express = require('express');
 const Router = express.Router();
-const {postFiles,listAllFiles,downloadFile} =require('../Controller/FilesController');
+const {postFiles,listAllFiles,downloadFile, deleteFile} =require('../Controller/FilesController');
 const app = express();
 const path=require('path');
+const {User}=require('../Models/UserModel');
+const {authenticateToken}=require('../Authentication/authtoken');
+const {Classroom}=require('../Models/ClassroomModel');
 
 app.use(express.json());
 app.use(multer);
 
-const fileStorage = multer.diskStorage({
-  // Destination to store image     
-  destination: (req,file,cb)=>{
-   console.log(req.params.RegisterNo)
-   var Reg=req.params.RegisterNo;
-   const dest= 'public/upload/'+Reg;
-   console.log(dest)
+const fileStorage = multer.diskStorage({  
+  destination: async(req,file,cb)=>{
+    let Class="";
+		Class=await Classroom.findById(req.user.Classroom[0]) 
+   const dest= 'public/upload/'+Class.Name+'/'+req.user.RegisterNo;
    fs.access(dest, function (error) {
     if (error) {
       console.log("Directory does not exist.");
       return fs.mkdir(dest, (error) => cb(error, dest));
     } else {
       console.log("Directory exists.");
-      return cb(null, dest);
+      return cb(null,dest);
     }
   });
   }, 
@@ -37,23 +38,14 @@ const fileUpload = multer({
 )
 
 
-Router.post('/upload/:RegisterNo',fileUpload.single('file'),(req, res) => {
+Router.post('/upload',authenticateToken,fileUpload.array('file',10),postFiles);
 
-  if(req.file)
-  {
-    res.send(req.file);
-    res.end("File is uploaded successfully!"); 
-  }
-  else{
-    res.send('Please Upload a File');
-  }
-     
-});
-  
+Router.get('/getfiles',authenticateToken, listAllFiles);
 
-Router.get('/getfiles/:RegisterNo', listAllFiles);
+Router.get('/download/:filename',authenticateToken,downloadFile);
 
-Router.get('/download/:filename',downloadFile);
+
+Router.delete('/:id',authenticateToken,deleteFile);
 
 
 
