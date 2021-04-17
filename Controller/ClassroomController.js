@@ -1,9 +1,7 @@
 const { Classroom, validate } = require("../Models/ClassroomModel");
 const { User } = require("../Models/UserModel");
-const fs=require('fs');
 const Fawn = require("fawn");
 const mongoose = require("mongoose");
-
 
 const getClassrooms =
   ("/",
@@ -102,8 +100,39 @@ const UpdateClassroom =
 const deleteClassroom =
   ("/:id",
   async (req, res) => {
+    const classroom = await Classroom.findById(req.params.id);
+    if (!classroom) return res.status(404).send("Department Not found");
 
-   
+    const user = [];
+    for(let u of classroom.users){
+      const result =await User.findById(u);
+      if (!result) return res.status(400).send("Invalid student.");
+      user.push(result);
+    }
+
+    try {
+      let task = Fawn.Task();
+      task = task.remove("classrooms", {_id : classroom._id});
+      for (let u of user) {
+        if(u.isStaff === false  || u.Classroom.length === 1)
+          task = task.remove('users', {_id: u._id})
+        else if(u.Classroom.length > 1){
+          let classrooms = u.Classroom;
+          let index = classrooms.indexOf(req.params.id);
+          classrooms.splice(index , 1);
+          task = task.update('users', {_id: u._id},
+          {
+              $set: {Classroom: classrooms}
+          }
+          )
+        }
+      }
+      task.run();
+    } catch (ex) {
+      res.status(500).send("Something failed." + ex.message);
+    }
+
+    res.status(200).send({ classroom });
   });
 
 module.exports = {

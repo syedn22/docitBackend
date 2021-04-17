@@ -6,6 +6,9 @@ dotenv.config();
 const auth = require("./Authentication/auth");
 const classroom = require("./Routes/Classroom");
 const user = require("./Routes/User");
+const Fawn = require("fawn");
+
+Fawn.init(mongoose);
 
 app.use(express.json());
 
