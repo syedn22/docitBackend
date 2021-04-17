@@ -46,11 +46,7 @@ const UserSchema = new Schema({
         type:[
             {
                 type: Schema.Types.ObjectId,
-<<<<<<< HEAD
-                ref: "Classroom"
-=======
                 ref: "Classroom",
->>>>>>> fea61471c7e5c70bd3ceca08f6e478e496b75b71
             }
         ],
         validate:{
