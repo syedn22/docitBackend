@@ -28,21 +28,43 @@ const fileStorage = multer.diskStorage({
   });
   }, 
     filename: (req, file, cb) => {
-      console.log(file.originalname);
-        cb(null, file.fieldname + '_'+ Date.now()+'_'+file.originalname)
+      console.log(req.body);
+        cb(null, file.fieldname + '_'+ Date.now()+'_'+req.body.filename+path.extname(file.originalname))
   }
 });
 const fileUpload = multer({
-  storage: fileStorage
+  storage: fileStorage,
+  fileFilter: function (req, file, callback) {
+    var ext = path.extname(file.originalname);
+    if(ext !== '.docx' && ext !== '.pdf' && ext !== '.txt') {
+        return callback(new Error('Only pdf,doc and txt  are allowed'))
+    }
+    callback(null, true)
+},
+  limits: { fileSize: 2000000 }
 }
 )
 
+const middlewarefile=(req,res,next)=>{
+  fileUpload.array('file',10)(req,res,(err)=>{
+      if(err)
+      {
+        if(err.message==="File too large")
+        {
+          return res.status(404).send(err.message+" Max size is 2MB")
+        }
+        return res.status(404).send(err.message)
+      }
+      next();
+  })
+}
 
-Router.post('/upload',authenticateToken,fileUpload.array('file',10),postFiles);
+
+Router.post('/upload',authenticateToken,middlewarefile,postFiles);
 
 Router.get('/getfiles',authenticateToken, listAllFiles);
 
-Router.get('/download/:filename',authenticateToken,downloadFile);
+Router.get('/download/:id',authenticateToken,downloadFile);
 
 
 Router.delete('/:id',authenticateToken,deleteFile);

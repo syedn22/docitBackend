@@ -7,10 +7,8 @@ const path=require('path');
 
 const postFiles=async(req,res,next)=>{
 
-	try{
-	if(req.files)
-	{
-	 
+
+	   try{
 		const {RegisterNo,category,date}=JSON.stringify(req.body);
 		const reg=parseInt(RegisterNo)
 
@@ -41,17 +39,13 @@ const postFiles=async(req,res,next)=>{
 			   return res.status(400).send("Files Not Uploaded Successfully")
 		   })
 	   }
-      
+    
+	   }
+	   catch(e)
+	   {
+		   return res.send("Something went wrong");
+	   }
 
-	}
-	else{
-	  return res.send('Please Upload a File');
-	}
-}
-catch(e)
-{
-	console.log(e.message)
-}
 }
 
 const listAllFiles =async (req, res) => {
@@ -82,13 +76,27 @@ const listAllFiles =async (req, res) => {
 }
 
 const downloadFile = async (req, res) => {
+	
+	const downloadfileid=req.params.id;
+
 	if(req.user)
 	{
-	let Class="";
-	Class=await Classroom.findById(req.user.Classroom[0]) 
-	const uploadFolder='public/upload/'+Class.Name+'/'+req.user.RegisterNo;
-	var filename = req.params.filename;
-	res.download(uploadFolder + '/'+filename);
+		const deletefile=await Files.findById(downloadfileid);
+		if(!deletefile) return res.status(400).send('File Not Found');
+
+		const downloadpath=deletefile.filepath;
+	const rootpath=path.dirname(__dirname).split('/').pop();
+	
+	console.log(path.join(rootpath,downloadpath));
+	fs.access(path.join(rootpath,downloadpath),(error)=>{
+		if (error) {
+			console.log("Directory does not exist.");
+			return res.status("404").send("File Doesn't exist");
+		  } else {
+			return res.download(path.join(rootpath,downloadpath));	
+		  }
+	})
+
 	}
 	else{
 		return res.status(200).send('Invalid User Found');
