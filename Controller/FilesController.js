@@ -75,6 +75,32 @@ const listAllFiles =async (req, res) => {
 	
 }
 
+
+const listAllFilestoStaff =async (req, res) => {
+
+	if(req.user.isStaff)
+	{
+		let files="";
+	
+	try{
+		console.log(req.params.classroomId)
+		files=await Files.find({classroomId:req.params.classroomId}) 
+	return res.status(200).send(files)
+	}
+	catch(e)
+	{
+		return res.status(400).send(e.message);
+	}
+	
+	}
+	else{
+		return res.status(200).send('Invalid User Found');
+	}  
+	
+}
+
+
+
 const downloadFile = async (req, res) => {
 	
 	const downloadfileid=req.params.id;
@@ -134,4 +160,4 @@ else{
 
 }
 
-module.exports={postFiles,listAllFiles,downloadFile,deleteFile};
+module.exports={postFiles,listAllFiles,downloadFile,deleteFile,listAllFilestoStaff};
