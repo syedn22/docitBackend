@@ -13,16 +13,16 @@ const getUsers =
       if (err) {
         return res.status(500).send("Out of Service");
       }
-      var u=[]
       for(let user of users)
       {
-        console.log(user._id)
+       // console.log(user.Password)
         var bytes  = CryptoJS.AES.decrypt(user.Password, process.env.SECRET_KEY);
         var originalText = bytes.toString(CryptoJS.enc.Utf8);
-        const pwd=originalText;
-        u.push(user);
+        console.log(originalText)
+        originalText=originalText.split('"').join('');
+        user.Password=originalText;
       }
-      res.status(200).send(u);
+      res.status(200).send(users);
     });
   });
 
@@ -34,6 +34,10 @@ const getUser =
       if (err) {
         return res.status(500).send(err.message);
       }
+      var bytes  = CryptoJS.AES.decrypt(user.Password, process.env.SECRET_KEY);
+      var originalText = bytes.toString(CryptoJS.enc.Utf8);
+        originalText=originalText.split('"').join('');
+        user.Password=originalText;
       res.status(200).send(user);
     });
   });
