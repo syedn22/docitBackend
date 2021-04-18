@@ -11,9 +11,18 @@ const getUsers =
   (req, res) => {
     User.find().exec((err, users) => {
       if (err) {
-        return res.status(500).send(err.message);
+        return res.status(500).send("Out of Service");
       }
-      res.status(200).send(users);
+      var u=[]
+      for(let user of users)
+      {
+        console.log(user._id)
+        var bytes  = CryptoJS.AES.decrypt(user.Password, process.env.SECRET_KEY);
+        var originalText = bytes.toString(CryptoJS.enc.Utf8);
+        const pwd=originalText;
+        u.push(user);
+      }
+      res.status(200).send(u);
     });
   });
 
