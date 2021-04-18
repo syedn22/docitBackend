@@ -66,7 +66,7 @@ Router.get('/getfiles',authenticateToken, listAllFiles);
 
 Router.get('/download/:id',authenticateToken,downloadFile);
 
-Router.get('/Staff/getfiles',authenticateToken,listFilestoStaff_Studentid)
+Router.post('/Staff/getfiles',authenticateToken,listFilestoStaff_Studentid)
 
 
 Router.delete('/:id',authenticateToken,deleteFile);
