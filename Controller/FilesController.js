@@ -25,6 +25,7 @@ const postFiles=async(req,res,next)=>{
 			classroomId:Class._id,
 			category:req.body.category,
 			filepath:fileobj.destination+"/"+fileobj.filename,
+			filename:fileobj.filename,
 			date:req.body.date
 		  })
 		  f.push(file);

@@ -1,9 +1,10 @@
 const { User, validate } = require("../Models/UserModel");
 const { Classroom } = require("../Models/ClassroomModel");
-const bcrypt = require("bcryptjs");
+const CryptoJS=require('crypto-js');
 const Fawn = require("fawn");
 const mongoose = require("mongoose");
 const { Files } = require("../Models/fileModel");
+const dotenv = require("dotenv").config();
 
 const getUsers =
   ("/",
@@ -41,8 +42,8 @@ const InsertUser =
       if (!result) return res.status(400).send("Invalid classroom.");
       classroom.push(result);
     }
-
-    var hash = bcrypt.hashSync(req.body.Password, 8);
+    var hash = CryptoJS.AES.encrypt(JSON.stringify(Password),process.env.SECRET_KEY).toString();
+    
     let user = new User({
       Email: req.body.Email,
       Password: hash,
@@ -131,7 +132,8 @@ const UpdateUser =
     const { Name, Phone, RegisterNo, Password, isStaff,ClassroomId } = req.body;
     const { error } = validate({ Name, Phone, RegisterNo, Password, isStaff,ClassroomId });
     if (error) return res.status(400).send(error.details[0].message);
-    var hash = bcrypt.hashSync(req.body.Password, 8);
+    
+    var hash = CryptoJS.AES.encrypt(JSON.stringify(Password),process.env.SECRET_KEY).toString();
 
     const updatedUser = {
       Email: req.body.Email,
@@ -141,7 +143,8 @@ const UpdateUser =
       isStaff: req.body.isStaff,
       Name: req.body.Name,
       Classroom: req.body.ClassroomId,
-    };
+    };  
+
 
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).send("User Not found");
