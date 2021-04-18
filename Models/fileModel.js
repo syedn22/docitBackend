@@ -27,6 +27,10 @@ const FileSchema=new Schema({
     date:{
         type:String,
         required:true
+    },
+    filename:{
+        type:String,
+        required:true
     }
 })
 

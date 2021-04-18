@@ -18,13 +18,14 @@ const postFiles=async(req,res,next)=>{
 		if(!Class) return res.status(400).send("No Class Found");
 
 		let f=[];
-       for(let fileobj of req.files)
+      for(let fileobj of req.files)
 	   {
 		const file=new Files({
 			studentId:req.user._id,
 			classroomId:Class._id,
 			category:req.body.category,
 			filepath:fileobj.destination+"/"+fileobj.filename,
+			filename:fileobj.filename,
 			date:req.body.date
 		  })
 		  f.push(file);
