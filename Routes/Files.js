@@ -15,7 +15,7 @@ app.use(multer);
 const fileStorage = multer.diskStorage({  
   destination: async(req,file,cb)=>{
     let Class="";
-		Class=await Classroom.findById(req.user.Classroom[0]) 
+		Class=await Classroom.findById(req.user.Classrooms[0]) 
    const dest= 'public/upload/'+Class.Name+'/'+req.user.RegisterNo;
    fs.access(dest, function (error) {
     if (error) {
@@ -29,7 +29,7 @@ const fileStorage = multer.diskStorage({
   }, 
     filename: (req, file, cb) => {
       console.log(req.body);
-        cb(null, file.fieldname + '_'+ Date.now()+'_'+req.body.filename+path.extname(file.originalname))
+        cb(null, file.fieldname + '_'+ Date.now()+'_'+file.originalname+'_'+path.extname(file.originalname))
   }
 });
 const fileUpload = multer({
