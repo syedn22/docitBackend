@@ -18,7 +18,6 @@ const getUsers =
        // console.log(user.Password)
         var bytes  = CryptoJS.AES.decrypt(user.Password, process.env.SECRET_KEY);
         var originalText = bytes.toString(CryptoJS.enc.Utf8);
-        console.log(originalText)
         originalText=originalText.split('"').join('');
         user.Password=originalText;
       }
@@ -45,12 +44,12 @@ const getUser =
 const InsertUser =
   ("/",
   async (req, res) => {
-    const { Name, Phone, RegisterNo, Password, isStaff,ClassroomId } = req.body;
-    const { error } = validate({ Name, Phone, RegisterNo, Password, isStaff,ClassroomId });
+    const { Name, Phone, RegisterNo, Password, isStaff,Classrooms } = req.body;
+    const { error } = validate({ Name, Phone, RegisterNo, Password, isStaff,Classrooms });
     if (error) return res.status(400).send(error.details[0].message);
 
     const classroom = [];
-    for(let c of req.body.ClassroomId){
+    for(let c of req.body.Classrooms){
       const result =await Classroom.findById(c);
       if (!result) return res.status(400).send("Invalid classroom.");
       classroom.push(result);
@@ -64,7 +63,7 @@ const InsertUser =
       RegisterNo: req.body.RegisterNo,
       isStaff: req.body.isStaff,
       Name: req.body.Name,
-      Classroom: req.body.ClassroomId,
+      Classrooms: req.body.Classrooms,
     });
 
     try {
@@ -142,8 +141,8 @@ const InsertUser =
 const UpdateUser =
   ("/:id",
   async (req, res) => {
-    const { Name, Phone, RegisterNo, Password, isStaff,ClassroomId } = req.body;
-    const { error } = validate({ Name, Phone, RegisterNo, Password, isStaff,ClassroomId });
+    const { Name, Phone, RegisterNo, Password, isStaff,Classrooms } = req.body;
+    const { error } = validate({ Name, Phone, RegisterNo, Password, isStaff,Classrooms });
     if (error) return res.status(400).send(error.details[0].message);
     
     var hash = CryptoJS.AES.encrypt(JSON.stringify(Password),process.env.SECRET_KEY).toString();
@@ -155,7 +154,7 @@ const UpdateUser =
       RegisterNo: req.body.RegisterNo,
       isStaff: req.body.isStaff,
       Name: req.body.Name,
-      Classroom: req.body.ClassroomId,
+      Classrooms: req.body.Classrooms,
     };  
 
 
@@ -169,14 +168,14 @@ const UpdateUser =
     classUser.Email = req.body.Email;
 
     const deleteClassroom = [];
-    for(let classroom of user.Classroom){
+    for(let classroom of user.Classrooms){
       const result =await Classroom.findById(classroom);
       if (result) 
         deleteClassroom.push(result);
     };
 
     const updateClassroom = [];
-    for(let classroom of req.body.ClassroomId){
+    for(let classroom of req.body.Classrooms){
       const result =await Classroom.findById(classroom);
       if (!result) return res.status(400).send("Invalid classroom.");
       updateClassroom.push(result);
@@ -239,7 +238,7 @@ const deleteUser =
     if (!user) return res.status(404).send("User Not found");
 
     const classroom = [];
-    for(let c of user.Classroom){
+    for(let c of user.Classrooms){
       const result =await Classroom.findById(c);
       if (!result) return res.status(400).send("Invalid classroom.");
       classroom.push(result);
@@ -269,27 +268,27 @@ const deleteUser =
       res.status(500).send("Something failed." + ex.message);
     }
     
-    try{
-   const delete_files=await Files.find({studentId:user._id});
+  //   try{
+  //  const delete_files=await Files.find({studentId:user._id});
 
-   if(delete_files)
-   {
-      try{
-        delete_files.forEach((file) => { fs.existsSync(file.path) && fs.unlinkSync(file.path)});
+  //  if(delete_files)
+  //  {
+  //     try{
+  //       delete_files.forEach((file) => { fs.existsSync(file.path) && fs.unlinkSync(file.path)});
 
-        await Files.findByIdAndRemove({studentId:user._id})
-      }
-      catch(e)
-      {
-        return res.status(400).send(e.message);
-      }
-   }
+  //       await Files.deleteMany({studentId:user._id})
+  //     }
+  //     catch(e)
+  //     {
+  //       return res.status(400).send(e.message);
+  //     }
+  //  }
 
-  }
-  catch(e)
-  {
-    return res.status(400).send(e.message);
-  }
+  // }
+  // catch(e)
+  // {
+  //   return res.status(400).send(e.message);
+  // }
 
     return res.status(200).send(user);
   });

@@ -42,7 +42,7 @@ const UserSchema = new Schema({
         default:false,
         required:true
     },
-    Classroom:{
+    Classrooms:{
         type:[
             {
                 type: Schema.Types.ObjectId,
@@ -75,7 +75,7 @@ const validateUser=(user)=> {
       isStaff:Joi.boolean().required(),
       RegisterNo:Joi.number().required(),
       Password: passwordComplexity(complexityOptions),
-      ClassroomId:Joi.array().items(Joi.objectId()).min(1)
+      Classrooms:Joi.array().items(Joi.objectId()).min(1)
     });
     return schema.validate(user);
   }

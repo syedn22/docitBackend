@@ -12,7 +12,7 @@ const postFiles=async(req,res,next)=>{
 		const {RegisterNo,category,date}=JSON.stringify(req.body);
 		const reg=parseInt(RegisterNo)
 
-		const Class=await Classroom.findById(req.user.Classroom[0]) 
+		const Class=await Classroom.findById(req.user.Classrooms[0]) 
 		if(!Class) return res.status(400).send("No Class Found");
 
 		let f=[];
@@ -53,7 +53,7 @@ const listAllFiles =async (req, res) => {
 	if(req.user)
 	{
 		let Class="";
-	Class=await Classroom.findById(req.user.Classroom[0]) 
+	Class=await Classroom.findById(req.user.Classrooms[0]) 
 	const uploadFolder='public/upload/'+Class.Name+'/'+req.user.RegisterNo;
 	// fs.readdir(uploadFolder, (err, files) => {
 	// 	res.send(files);
