@@ -2,6 +2,7 @@ const { Classroom, validate } = require("../Models/ClassroomModel");
 const { User } = require("../Models/UserModel");
 const Fawn = require("fawn");
 const mongoose = require("mongoose");
+const fs=require('fs');
 
 const getClassrooms =
   ("/",
@@ -115,10 +116,10 @@ const deleteClassroom =
       let task = Fawn.Task();
       task = task.remove("classrooms", {_id : classroom._id});
       for (let u of user) {
-        if(u.isStaff === false  || u.Classroom.length === 1)
+        if(u.isStaff === false  || u.Classrooms.length === 1)
           task = task.remove('users', {_id: u._id})
-        else if(u.Classroom.length > 1){
-          let classrooms = u.Classroom;
+        else if(u.Classrooms.length > 1){
+          let classrooms = u.Classrooms;
           let index = classrooms.indexOf(req.params.id);
           classrooms.splice(index , 1);
           task = task.update('users', {_id: u._id},
