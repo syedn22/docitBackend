@@ -69,12 +69,15 @@ Router.post('/forgetPassword',async (req,res)=>{
       transporter.sendMail(mailOptions, function(error, info){
         if (error) {
           console.log(error);
-          res.status(422).send("Email Not Sent");
+          return res.status(422).send("Email Not Sent");
         } else {
           console.log('Email sent: ' + info.response);
-          res.status(200).send("Email Sent");
+         return res.status(200).send("Email Sent");
         }
       });
+    }
+    else{
+      return res.status(404).send("Invalid User")
     }
 
   }

@@ -5,44 +5,39 @@ const { Classroom } = require("../Models/ClassroomModel");
 const path = require("path");
 
 const postFiles = async (req, res, next) => {
-  
-	   try{
-		const {RegisterNo,category,date}=JSON.stringify(req.body);
-		const reg=parseInt(RegisterNo)
+  try {
+    const { RegisterNo, category, date } = JSON.stringify(req.body);
+    const reg = parseInt(RegisterNo);
 
-		const Class=await Classroom.findById(req.user.Classroom[0]) 
-		if(!Class) return res.status(400).send("No Class Found");
+    const Class = await Classroom.findById(req.user.Classroom[0]);
+    if (!Class) return res.status(400).send("No Class Found");
 
-		let f=[];
-       for(let fileobj of req.files)
-	   {
-		const file=new Files({
-			studentId:req.user._id,
-			classroomId:Class._id,
-			category:req.body.category,
-			filepath:fileobj.destination+"/"+fileobj.filename,
-			filename:fileobj.filename,
-			date:req.body.date
-		  })
-		  f.push(file);
-	   }
-      console.log(f)
-	   if(f && f.length>=1)
-	   {
-		   Files.insertMany(f).then((files)=>{
-			   return res.status(200).send("Files Uploaded Successfully");
-		   })
-		   .catch((e)=>{
-			   console.log(e.message)
-			   return res.status(400).send("Files Not Uploaded Successfully")
-		   })
-	   }
-    
-	   }
-	   catch(e)
-	   {
-		   return res.send("Something went wrong");
-	   }
+    let f = [];
+    for (let fileobj of req.files) {
+      const file = new Files({
+        studentId: req.user._id,
+        classroomId: Class._id,
+        category: req.body.category,
+        filepath: fileobj.destination + "/" + fileobj.filename,
+        filename: fileobj.filename,
+        date: req.body.date,
+      });
+      f.push(file);
+    }
+    console.log(f);
+    if (f && f.length >= 1) {
+      Files.insertMany(f)
+        .then((files) => {
+          return res.status(200).send("Files Uploaded Successfully");
+        })
+        .catch((e) => {
+          console.log(e.message);
+          return res.status(400).send("Files Not Uploaded Successfully");
+        });
+    }
+  } catch (e) {
+    return res.send("Something went wrong");
+  }
 };
 
 const listAllFiles = async (req, res) => {
@@ -73,6 +68,27 @@ const listAllFilestoStaff = async (req, res) => {
     try {
       console.log(req.params.classroomId);
       files = await Files.find({ classroomId: req.params.classroomId });
+      return res.status(200).send(files);
+    } catch (e) {
+      return res.status(400).send(e.message);
+    }
+  } else {
+    return res.status(200).send("Invalid User Found");
+  }
+};
+
+const listFilestoStaff_Studentid = async (req, res) => {
+  if (req.user) {
+    let files = "";
+
+    try {
+      files = await Files.find({
+        $and: [
+          { classroomId: req.body.classroomId },
+          { studentId: req.body.studentId },
+        ],
+      });
+      if (!files) return res.status(422).send("No User Files Found");
       return res.status(200).send(files);
     } catch (e) {
       return res.status(400).send(e.message);
@@ -138,4 +154,5 @@ module.exports = {
   downloadFile,
   deleteFile,
   listAllFilestoStaff,
+  listFilestoStaff_Studentid,
 };

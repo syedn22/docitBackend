@@ -2,7 +2,7 @@ const multer = require("multer");
 const fs = require("fs");
 const express = require("express");
 const Router = express.Router();
-const {postFiles,listAllFiles,downloadFile, deleteFile,listAllFilestoStaff} =require('../Controller/FilesController');
+const {postFiles,listAllFiles,downloadFile, deleteFile,listFilestoStaff_Studentid} =require('../Controller/FilesController');
 const app = express();
 const path = require("path");
 const { User } = require("../Models/UserModel");
@@ -66,7 +66,7 @@ Router.get('/getfiles',authenticateToken, listAllFiles);
 
 Router.get('/download/:id',authenticateToken,downloadFile);
 
-Router.get('/Class/:classroomId',authenticateToken,listAllFilestoStaff)
+Router.post('/Staff/getfiles',authenticateToken,listFilestoStaff_Studentid)
 
 Router.post(
   "/upload",
