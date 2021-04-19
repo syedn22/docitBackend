@@ -76,33 +76,33 @@ const listAllFiles =async (req, res) => {
 }
 
 
-const listAllFilestoStaff =async (req, res) => {
+// const listAllFilestoStaff =async (req, res) => {
 
-	if(req.user.isStaff)
-	{
-		let files="";
+// 	if(req.user.isStaff)
+// 	{
+// 		let files="";
 	
-	try{
-		console.log(req.params.classroomId)
-		files=await Files.find({classroomId:req.params.classroomId}) 
-	return res.status(200).send(files)
-	}
-	catch(e)
-	{
-		return res.status(400).send(e.message);
-	}
+// 	try{
+// 		console.log(req.params.classroomId)
+// 		files=await Files.find({classroomId:req.params.classroomId}) 
+// 	return res.status(200).send(files)
+// 	}
+// 	catch(e)
+// 	{
+// 		return res.status(400).send(e.message);
+// 	}
 	
-	}
-	else{
-		return res.status(200).send('Invalid User Found');
-	}  
+// 	}
+// 	else{
+// 		return res.status(200).send('Invalid User Found');
+// 	}  
 	
-}
+// }
 
 
 const listFilestoStaff_Studentid =async (req, res) => {
 
-	if(req.user)
+	if(req.user.isStaff)
 	{
 		let files="";
 	
@@ -185,4 +185,4 @@ else{
 
 }
 
-module.exports={postFiles,listAllFiles,downloadFile,deleteFile,listAllFilestoStaff,listFilestoStaff_Studentid};
+module.exports={postFiles,listAllFiles,downloadFile,deleteFile,listFilestoStaff_Studentid};
