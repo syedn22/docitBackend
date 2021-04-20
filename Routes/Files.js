@@ -1,13 +1,13 @@
-const multer=require('multer');
-const fs=require('fs');
-const express = require('express');
+const multer = require("multer");
+const fs = require("fs");
+const express = require("express");
 const Router = express.Router();
 const {postFiles,listAllFiles,downloadFile, deleteFile,listFilestoStaff_Studentid, listAllFilestoStaff} =require('../Controller/FilesController');
 const app = express();
-const path=require('path');
-const {User}=require('../Models/UserModel');
-const {authenticateToken}=require('../Authentication/authtoken');
-const {Classroom}=require('../Models/ClassroomModel');
+const path = require("path");
+const { User } = require("../Models/UserModel");
+const { authenticateToken } = require("../Authentication/authtoken");
+const { Classroom } = require("../Models/ClassroomModel");
 
 app.use(express.json());
 app.use(multer);
@@ -76,8 +76,10 @@ Router.post('/Staff/getfiles',authenticateToken,listFilestoStaff_Studentid)
 
 Router.get('/Staff/getallfiles/:classroomId',authenticateToken,listAllFilestoStaff)
 
-Router.delete('/:id',authenticateToken,deleteFile);
+Router.get("/getfiles", authenticateToken, listAllFiles);
 
+Router.get("/download/:filename", authenticateToken, downloadFile);
 
+Router.delete("/:id", authenticateToken, deleteFile);
 
-  module.exports=Router;
+module.exports = Router;
