@@ -3,10 +3,12 @@ const {Files}=require('../Models/fileModel');
 const {User}=require('../Models/UserModel');
 const {Classroom}=require('../Models/ClassroomModel');
 const path=require('path');
+const Joi = require('joi');
+Joi.objectId = require("joi-objectid")(Joi);
+const ObjectID=require('mongodb').ObjectID;
 
 
 const postFiles=async(req,res,next)=>{
-
 
 	   try{
 		const {RegisterNo,category,date}=JSON.stringify(req.body);
@@ -81,7 +83,6 @@ const listAllFilestoStaff =async (req, res) => {
 	if(req.user.isStaff)
 	{
 		let files="";
-	
 	try{
 		console.log(req.params.classroomId)
 		files=await Files.find({classroomId:req.params.classroomId}) 
@@ -129,35 +130,41 @@ const listFilestoStaff_Studentid =async (req, res) => {
 const downloadFile = async (req, res) => {
 	
 	const downloadfileid=req.params.id;
-
-	if(req.user)
+	if(ObjectID.isValid(downloadFile))
 	{
-		const deletefile=await Files.findById(downloadfileid);
-		if(!deletefile) return res.status(400).send('File Not Found');
+		if(req.user)
+		{
+			const deletefile=await Files.findById(downloadfileid);
+			if(!deletefile) return res.status(400).send('File Not Found');
 
-		const downloadpath=deletefile.filepath;
-	const rootpath=path.dirname(__dirname).split('/').pop();
+			const downloadpath=deletefile.filepath;
+			const rootpath=path.dirname(__dirname).split('/').pop();
 	
-	console.log(path.join(rootpath,downloadpath));
-	fs.access(path.join(rootpath,downloadpath),(error)=>{
-		if (error) {
-			console.log("Directory does not exist.");
-			return res.status("404").send("File Doesn't exist");
-		  } else {
-			return res.download(path.join(rootpath,downloadpath));	
-		  }
-	})
+			console.log(path.join(rootpath,downloadpath));
+			fs.access(path.join(rootpath,downloadpath),(error)=>{
+			if (error) {
+				console.log("Directory does not exist.");
+				return res.status("404").send("File Doesn't exist");
+		  	} else {
+				return res.download(path.join(rootpath,downloadpath));	
+		  	}
+		})
 
-	}
+		}
+		else{
+			return res.status(200).send('Invalid User Found');
+		}
+	} 
 	else{
-		return res.status(200).send('Invalid User Found');
-	}  
+		return res.status(404).send('Invalid FileId is sent');
+	} 
 }
 
 const deleteFile=async(req,res)=>{
 
 	const deletefileid=req.params.id;
-
+	if(ObjectID.isValid(deletefileid))
+	{
 	if(req.user)
 	{
 	const deletefile=await Files.findById(deletefileid);
@@ -182,6 +189,10 @@ const deleteFile=async(req,res)=>{
 else{
 	return res.status(200).send('Invalid User Found');
 }
+	}
+	else{
+		return res.status(200).send('Invalid FileId sent');
+	}
 
 }
 

@@ -28,8 +28,14 @@ const fileStorage = multer.diskStorage({
   });
   }, 
     filename: (req, file, cb) => {
-      console.log(req.body);
-        cb(null, file.fieldname + '_'+ Date.now()+'_'+file.originalname+'_'+path.extname(file.originalname))
+      const authHeader=req.headers['filename'];
+      if(authHeader)
+      {
+        cb(null, authHeader+'_'+Date.now()+'_'+path.extname(file.originalname))
+      }
+       else{
+        return callback(new Error('Filename is not specified'))
+       } 
   }
 });
 const fileUpload = multer({
