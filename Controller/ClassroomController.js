@@ -3,9 +3,10 @@ const { User } = require("../Models/UserModel");
 const Fawn = require("fawn");
 const mongoose = require("mongoose");
 const fs=require('fs');
+const auth=require('../Authentication/authtoken');
 
 const getClassrooms =
-  ("/",
+  ("/",auth,
   (req, res) => {
     Classroom.find().exec((err, courses) => {
       if (err) {
@@ -16,7 +17,7 @@ const getClassrooms =
   });
 
 const getClassroom =
-  ("/:id",
+  ("/:id",auth,
   (req, res) => {
     // const classroom = await Classroom.findByIdAndRemove(req.params.id);
     Classroom.findById(req.params.id).exec((err, classroom) => {
@@ -28,7 +29,7 @@ const getClassroom =
   });
 
 const InsertClassroom =
-  ("/",
+  ("/",auth,
   async (req, res) => {
     const { Name, Batch, Period } = req.body;
     const { error } = validate({ Name, Batch, Period });
@@ -78,7 +79,7 @@ const InsertClassroom =
   });
 
 const UpdateClassroom =
-  ("/:id",
+  ("/:id",auth,
   async (req, res) => {
     const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -100,7 +101,7 @@ const UpdateClassroom =
   });
 
 const deleteClassroom =
-  ("/:id",
+  ("/:id",auth,
   async (req, res) => {
     const classroom = await Classroom.findById(req.params.id);
     if (!classroom) return res.status(404).send("Department Not found");

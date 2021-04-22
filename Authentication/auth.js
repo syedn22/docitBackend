@@ -7,6 +7,7 @@ const {User} = require('../Models/UserModel');
 const jwt=require('jsonwebtoken');
 const {authenticateToken}=require('./authtoken');
 const transporter=require('./emailauth');
+const { Admin } = require('../Models/adminModel');
 app.use(express.json());
 
 
@@ -46,6 +47,32 @@ Router.post('/signin',async (req, res) => {
    return res.status(401).send('Invalid User');
   }
 })
+
+Router.post('/admin/signin',async (req, res) => {
+
+  var usercredentials = req.body;
+  if (usercredentials.Username == "" || usercredentials.Password == "") {
+    return res.status(401).send(JSON.stringify({ "error": "Please Add All the Fields", "success": "" }));
+  }
+  else {
+    const admin=await Admin.findOne({$and:[{Username:usercredentials.Username},{Password:usercredentials.Password}]});
+    
+    if(admin)
+    {
+      
+        const plainuser=JSON.stringify(admin);
+        const token=jwt.sign(plainuser,process.env.SECRET_KEY);
+        return res.status(200).send(token);
+    }
+    else{
+      return res.send("Invalid User");
+    }
+
+  }
+})
+
+
+
 
 Router.post('/forgetPassword',async (req,res)=>{
   var usercredentials = req.body;
