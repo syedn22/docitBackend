@@ -36,3 +36,4 @@ const FileSchema=new Schema({
 
 const FileModel=mongoose.model("file",FileSchema);
 module.exports.Files = FileModel;
+module.exports.FileSchema=FileSchema;

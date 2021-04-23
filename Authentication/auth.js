@@ -36,12 +36,12 @@ Router.post('/signin',async (req, res) => {
         return res.status(200).send(token);
       }
       else{
-        return res.send("User credentials are wrong");
+        return res.status(400).send("User credentials are wrong");
       }
      
     }
     else{
-      return res.send("User Credentials are wrong");
+      return res.status(400).send("User Credentials are wrong");
     }
 
    return res.status(401).send('Invalid User');
@@ -65,7 +65,7 @@ Router.post('/admin/signin',async (req, res) => {
         return res.status(200).send(token);
     }
     else{
-      return res.send("Invalid User");
+      return res.status(400).send("Invalid User");
     }
 
   }
