@@ -72,7 +72,7 @@ Router.get('/getfiles',authenticateToken, listAllFiles);
 
 Router.get('/download/:id',authenticateToken,downloadFile);
 
-Router.post('/Staff/getfiles',authenticateToken,listFilestoStaff_Studentid)
+Router.get('/Staff/getfiles/classroomId/studentId',authenticateToken,listFilestoStaff_Studentid)
 
 Router.get('/Staff/getallfiles/:classroomId',authenticateToken,listAllFilestoStaff)
 
