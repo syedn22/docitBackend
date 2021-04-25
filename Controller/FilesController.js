@@ -107,7 +107,7 @@ const listFilestoStaff_Studentid =async (req, res) => {
 	{
 		let files="";
 	try{
-		files=await Files.find({$and:[{classroomId:req.body.classroomId},{studentId:req.body.studentId}]}) ;
+		files=await Files.find({$and:[{classroomId:req.params.classroomId},{studentId:req.params.studentId}]}) ;
 		if(!files) return res.status(422).send("No User Files Found");
 	return res.status(200).send(files)
 	}
